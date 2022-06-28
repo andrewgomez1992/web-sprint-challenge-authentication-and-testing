@@ -1,5 +1,22 @@
+const jwt = require('jsonwebtoken')
+require('dotenv')
+
+const secret = process.env.SECRET || 'ssh'
+
 module.exports = (req, res, next) => {
-  next();
+  const token = req.headers.authorization
+  if (!token) {
+    res.status(401).json({ message: 'token required' })
+  } else {
+    jwt.verify(token, secret, (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: 'token invalid' })
+      } else {
+        req.decodedToken = decodedToken
+        next()
+      }
+    })
+  }
   /*
     IMPLEMENT
 
