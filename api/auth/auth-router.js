@@ -27,13 +27,13 @@ router.post('/login', checkLogin, (req, res) => {
         };
       };
 
-      if (!user || user.username !== req.body.username) {
-        res.status(404).json({ message: 'invalid credentials' });
-        return;
-      } else {
-        const token = generateToken(user);
-        res.status(200).json({ message: `welcome, ${user.username}`, token });
-      };
+      // if (!user || user.username !== req.body.username) {
+      //   res.status(404).json({ message: 'invalid credentials' });
+      //   return;
+      // } else {
+      //   const token = generateToken(user);
+      //   res.status(200).json({ message: `welcome, ${user.username}`, token });
+      // };
     });
 });
 
