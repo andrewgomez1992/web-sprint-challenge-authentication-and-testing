@@ -19,13 +19,9 @@ function checkRegistered(req, res, next) {
 };
 
 function checkLogin(req, res, next) {
-    let { username, password } = req.body;
+    const { username, password } = req.body;
     if (!username || !password) {
-        res.status(401).json({ message: 'invalid credentials' })
-        return;
-    } else {
-        const token = generateToken(username);
-        res.status(200).json({ message: `welcome, ${username}`, token })
+        res.status(401).json({ message: 'username and password required' })
     }
 }
 
