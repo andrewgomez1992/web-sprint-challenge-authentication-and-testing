@@ -1,5 +1,9 @@
 const db = require('../../data/dbConfig')
 
+function getAll() {
+    return db('users')
+}
+
 async function add(user) {
     const [id] = await db('users').insert(user)
     return getById(id)
@@ -16,5 +20,6 @@ async function getByUserName(username) {
 module.exports = {
     add,
     getById,
-    getByUserName
+    getByUserName,
+    getAll
 }

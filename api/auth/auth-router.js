@@ -1,8 +1,12 @@
 const router = require('express').Router();
 const User = require('../users/users-model')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const token = require('./token')
 
-router.post('/register', async (req, res) => {
+const { checkUserNameUnique, checkUserBody } = require('./auth-middleware')
+
+router.post('/register', checkUserBody, checkUserNameUnique, async (req, res) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -40,7 +44,6 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  res.end('implement login, please!');
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -55,7 +58,7 @@ router.post('/login', (req, res) => {
       the response body should have `message` and `token`:
       {
         "message": "welcome, Captain Marvel",
-        "token": "eyJhbGciOiJIUzI ... ETC ... vUPjZYDSa46Nwz8"
+        " "
       }
 
     3- On FAILED login due to `username` or `password` missing from the request body,
@@ -64,6 +67,26 @@ router.post('/login', (req, res) => {
     4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
       the response body should include a string exactly as follows: "invalid credentials".
   */
+  User.getAll()
+    .then(res => {
+      let user = ''
+      for (let i = 0; i < res.length; i++) {
+        if (res[i].username === req.body.username
+          && bcrypt.compareSync(req.body.password, res[i].password)) {
+          user = res[i]
+          console.log(user)
+        }
+      }
+
+      if (!user || user.username !== req.body.username) {
+        res.status(401).json({ message: 'invalid credentials' })
+      } else {
+        const token = token(user)
+        res.status(200).json({ message: `welcome, ${user.username}`, token })
+      }
+    })
+
+
 });
 
-module.exports = router;
+module.exports = router; 
