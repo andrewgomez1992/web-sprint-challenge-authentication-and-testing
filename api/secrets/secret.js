@@ -1,4 +1,1 @@
-
-require("dotenv").config();
-
-module.exports = process.env.secret || 'rome is around here somewhere'
+module.exports = process.env.JWT_SECRET || 'rome is around here somewhere'
