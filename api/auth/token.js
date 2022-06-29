@@ -1,16 +1,15 @@
-require('dotenv')
-const jwt = require('jsonwebtoken')
-const secret = require('../secrets/secret')
+const secret = require('../secrets/secret');
+const jwt = require('jsonwebtoken');
 
-const generateToken = (user) => {
-    const { id: subject, name } = user;
+function generateToken(user) {
     const payload = {
-        subject, name
-    }
+        subject: user.user_id,
+        username: user.username,
+    };
     const options = {
-        expiresIn: '1d'
-    }
-    return jwt.sign(payload, secret, options)
+        expiresIn: '1d',
+    };
+    return jwt.sign(payload, secret, options);
 }
 
-module.exports = generateToken
+module.exports = generateToken;

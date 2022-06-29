@@ -1,35 +1,37 @@
-const User = require('../users/users-model')
+const User = require('../users/users-model');
 
-const checkUserNameUnique = async (req, res, next) => {
-    const { username } = req.body
-    const user = await User.getByUserName(username)
-    if (user) {
-        next({ status: 401, message: 'username taken' })
-    } else {
-        next()
-    }
-}
-
-const checkUserBody = (req, res, next) => {
-    const { username, password } = req.body
+function checkRegistered(req, res, next) {
+    const { username, password } = req.body;
     if (!username || !password) {
-        next({ status: 400, message: 'username and password required' })
+        res.status(401).json({ message: 'username and password required' });
+        return;
+    };
+    User.getAll()
+        .then(result => {
+            if (result.some(x => x.username === req.body.username)) {
+                res.status(409).json({ message: 'username taken' });
+                return;
+            } else {
+                next();
+            };
+        });
+};
+
+function checkLogin(req, res, next) {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        res.status(401).json({ message: 'username and password required' });
+        return;
     }
+    User.getAll()
+        .then(result => {
+            if (!result.some(x => x.username === req.body.username)) {
+                res.status(404).json({ message: 'invalid credentials' });
+                return;
+            } else {
+                next();
+            }
+        })
 }
 
-const checkUserNameExists = async (req, res, next) => {
-    const { username } = req.body
-    const user = await User.getByUserName(username)
-    if (user) {
-        req.user = user
-        next()
-    } else {
-        next({ status: 401, message: "invalid credentials" })
-    }
-}
-
-module.exports = {
-    checkUserNameUnique,
-    checkUserBody,
-    checkUserNameExists
-}
+module.exports = { checkRegistered, checkLogin };
