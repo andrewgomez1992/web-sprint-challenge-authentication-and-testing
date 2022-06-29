@@ -17,24 +17,7 @@ router.post('/register', checkRegistered, async (req, res, next) => {
 });
 
 router.post('/login', checkLogin, (req, res) => {
-  User.getAll()
-    .then(result => {
-      let user = '';
-      for (let i = 0; i < result.length; i++) {
-        if (result[i].username === req.body.username
-          && bcrypt.compareSync(req.body.password, result[i].password)) {
-          user = result[i];
-        };
-      };
 
-      // if (!user || user.username !== req.body.username) {
-      //   res.status(404).json({ message: 'invalid credentials' });
-      //   return;
-      // } else {
-      //   const token = generateToken(user);
-      //   res.status(200).json({ message: `welcome, ${user.username}`, token });
-      // };
-    });
 });
 
 module.exports = router;
