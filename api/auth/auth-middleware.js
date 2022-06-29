@@ -21,15 +21,16 @@ function checkRegistered(req, res, next) {
 function checkLogin(req, res, next) {
     const { username, password } = req.body;
     if (!username || !password) {
-        res.status(401).json({ message: 'username and password required' })
+        res.status(401).json({ message: 'username and password required' });
+        return;
     }
     User.getAll()
         .then(result => {
             if (!result.some(x => x.username === req.body.username)) {
-                res.status(404).json({ message: 'invalid credentials' })
-                return
+                res.status(404).json({ message: 'invalid credentials' });
+                return;
             } else {
-                next()
+                next();
             }
         })
 }
