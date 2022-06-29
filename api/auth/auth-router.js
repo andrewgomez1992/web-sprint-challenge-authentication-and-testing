@@ -6,7 +6,7 @@ const generateToken = require('./token')
 
 const { checkUserNameUnique, checkUserBody } = require('./auth-middleware')
 
-router.post('/register', checkUserBody, checkUserNameUnique, async (req, res) => {
+router.post('/register', checkUserBody, checkUserNameUnique, async (req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -43,7 +43,7 @@ router.post('/register', checkUserBody, checkUserNameUnique, async (req, res) =>
   }
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', (req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
