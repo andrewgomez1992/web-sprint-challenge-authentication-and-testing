@@ -38,12 +38,18 @@ describe('server', () => {
 
 describe('POST /auth/register', () => {
   test('if password is missing', async () => {
-    let res = await request(server).post('/api/auth/register').send({ username: 'drewgomez' })
-    expect(res.body.message).toBe("username and password required")
+    let res = await request(server).post('/api/auth/register').send({ username: 'drewgomez' });
+    expect(res.body.message).toBe("username and password required");
   })
   test('if username is missing', async () => {
-    let res = await request(server).post('/api/auth/register').send({ password: '12345' })
-    expect(res.body.message).toBe("username and password required")
+    let res = await request(server).post('/api/auth/register').send({ password: '12345' });
+    expect(res.body.message).toBe("username and password required");
+  })
+  test('if user or password is incorrect', async () => {
+    let res = await request(server).post('/api/auth/register').send({ username: 'drewgomez', password: '12345' });
+    expect(res.body).toHaveProperty('id');
+    expect(res.body).toHaveProperty('username');
+    expect(res.body).toHaveProperty('username');
   })
 })
 
