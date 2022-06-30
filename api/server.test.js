@@ -36,11 +36,16 @@ describe('server', () => {
   })
 })
 
-// describe('POST /register', () => {
-//   test('if username or password is missing, response body includes "username and password required"')
-// })
-
-
+describe('POST /auth/register', () => {
+  test('if password is missing', async () => {
+    let res = await request(server).post('/api/auth/register').send({ username: 'drewgomez' })
+    expect(res.body.message).toBe("username and password required")
+  })
+  test('if username is missing', async () => {
+    let res = await request(server).post('/api/auth/register').send({ password: '12345' })
+    expect(res.body.message).toBe("username and password required")
+  })
+})
 
 describe('GET /jokes', () => {
   test('if token missing from Authorization header, response body includes "token required"', async () => {
