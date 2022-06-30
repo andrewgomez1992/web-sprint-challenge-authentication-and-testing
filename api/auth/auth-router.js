@@ -2,8 +2,8 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const User = require('../users/users-model');
 const { checkRegistered, checkLogin } = require('./auth-middleware');
-const secret = require('../secrets/secret')
 const jwt = require('jsonwebtoken')
+const secret = require('../secrets/secret')
 
 function generateToken(user) {
   const payload = {
@@ -15,6 +15,7 @@ function generateToken(user) {
   };
   return jwt.sign(payload, secret, options);
 }
+
 
 router.post('/register', checkRegistered, async (req, res, next) => {
   const { username, password } = req.body;
@@ -29,29 +30,27 @@ router.post('/register', checkRegistered, async (req, res, next) => {
 });
 
 router.post('/login', checkLogin, (req, res, next) => {
-  const user = req.user
-  const { password } = req.body
-  const validCreds = bcrypt.compareSync(password, user.password)
+  User.getAll()
+    .then(result => {
+      let user = '';
+      for (let i = 0; i < result.length; i++) {
+        if (result[i].username === req.body.username
+          && bcrypt.compareSync(req.body.password, result[i].password)) {
+          user = result[i];
+        }
+      }
 
-  const generateToken = user => {
-    const payload = {
-      subject: user.id,
-      username: user.username,
-    }
-    const options = {
-      expiresIn: '1d'
-    }
-    return jwt.sign(payload, secret, options)
-  }
-
-  if (validCreds) {
-    res.status(200).json({
-      message: `welcome, ${user.username}`,
-      token: generateToken(user)
+      if (!user || user.username !== req.body.username) {
+        res.status(401).json({ message: 'invalid credentials' });
+        return;
+      } else {
+        const token = generateToken(user);
+        res.status(200).json({
+          message: `Success! Here is your token:`,
+          token,
+        });
+      }
     })
-  } else {
-    next({ status: 401, message: 'invalid credentials' })
-  }
 });
 
 module.exports = router;
