@@ -1,1 +1,1 @@
-module.exports = process.env.secret || 'rome is around here somewhere'
+module.exports = process.env.secret || 'rome is around here somewhere';

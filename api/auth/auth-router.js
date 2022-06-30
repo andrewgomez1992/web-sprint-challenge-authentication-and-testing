@@ -2,8 +2,8 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const User = require('../users/users-model');
 const { checkRegistered, checkLogin } = require('./auth-middleware');
-const jwt = require('jsonwebtoken')
-const secret = require('../secrets/secret')
+const jwt = require('jsonwebtoken');
+const secret = require('../secrets/secret');
 
 function generateToken(user) {
   const payload = {
@@ -14,8 +14,7 @@ function generateToken(user) {
     expiresIn: '1d',
   };
   return jwt.sign(payload, secret, options);
-}
-
+};
 
 router.post('/register', checkRegistered, async (req, res, next) => {
   const { username, password } = req.body;
@@ -37,20 +36,17 @@ router.post('/login', checkLogin, (req, res, next) => {
         if (result[i].username === req.body.username
           && bcrypt.compareSync(req.body.password, result[i].password)) {
           user = result[i];
-        }
-      }
+        };
+      };
 
       if (!user || user.username !== req.body.username) {
         res.status(401).json({ message: 'invalid credentials' });
         return;
       } else {
         const token = generateToken(user);
-        res.status(200).json({
-          message: `Success! Here is your token:`,
-          token,
-        });
-      }
-    })
+        res.status(200).json({ message: `Success! Here is your token:`, token });
+      };
+    });
 });
 
 module.exports = router;
