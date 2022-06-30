@@ -53,12 +53,28 @@ describe('POST /auth/register', () => {
   })
 })
 
+describe('POST /auth/login', () => {
+  test('if username or password is missing, response body includes "username and password required"', async () => {
+    let res = await request(server).post('/api/auth/login').send({ password: 'password' });
+    expect(res.body.message).toBe("username and password required");
+  })
+  test('if username does not exist, response body includes "invalid credentials"', async () => {
+    let res = await request(server).post('/api/auth/login').send({ username: "jondoe", password: "doejon" })
+    expect(res.body.message).toBe("invalid credentials");
+  })
+  test('if password is incorrect, response body includes "invalid credentials"', async () => {
+    let res = await request(server).post('/api/auth/login').send({ username: 'drew', password: 'correct' })
+    await request(server).post('/api/auth/login').send({ username: 'drew', password: 'incorrect' })
+    expect(res.body.message).toBe('invalid credentials')
+  })
+})
+
 describe('GET /jokes', () => {
-  test('if token missing from Authorization header, response body includes "token required"', async () => {
+  test('if token is missing, response body includes "token required"', async () => {
     const res = await request(server).get('/api/jokes');
     expect(res.body.message).toBe("token required");
   });
-  test('if JWT token invalid, response body includes "token invalid"', async () => {
+  test('if token is invalid, response body includes "token invalid"', async () => {
     const jokesRes = await request(server).get('/api/jokes').set('Authorization', "totallybogustoken");
     expect(jokesRes.body.message).toBe("token invalid");
   });
@@ -67,7 +83,6 @@ describe('GET /jokes', () => {
     const res = await request(server).post('/api/auth/login').send({ username: "validuser", password: "RIGHTPASSWORD" });
     const { token } = res.body;
     const jokesRes = await request(server).get('/api/jokes').set('Authorization', token);
-    expect(jokesRes.body).toBeInstanceOf(Array);
     expect(jokesRes.body).toHaveLength(3);
   });
 });
