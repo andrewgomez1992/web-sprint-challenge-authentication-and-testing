@@ -1,5 +1,4 @@
 const User = require('../users/users-model');
-const generateToken = require('./token');
 
 function checkRegistered(req, res, next) {
     const { username, password } = req.body;

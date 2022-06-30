@@ -1,7 +1,7 @@
 const server = require('./server')
 const request = require('supertest')
 const bcrypt = require('bcryptjs')
-const token = require('../api/auth/token')
+const token = require('../api/auth/auth-router')
 const jwt = require('jsonwebtoken')
 
 const db = require('../data/dbConfig');
